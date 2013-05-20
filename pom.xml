@@ -1,0 +1,213 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.overlord.gadgets.server</groupId>
+  <artifactId>gadget-installer</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <!-- The versions of stuff we're installing -->
+    <gadget.version>1.0.0-SNAPSHOT</gadget.version>
+    <rtgov.version>1.0.0-SNAPSHOT</rtgov.version>
+    <overlord-commons.version>1.0.6-SNAPSHOT</overlord-commons.version>
+    <resteasy.version>2.3.5.Final</resteasy.version>
+  
+    <!-- Instruct the build to use only UTF-8 encoding for source code -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
+
+    <!-- Maven plugin versions -->
+    <maven.surefire.report.plugin.version>2.4.3</maven.surefire.report.plugin.version>
+    <maven.surefire.plugin.version>2.7.1</maven.surefire.plugin.version>
+    <maven.assembly.plugin.version>2.2</maven.assembly.plugin.version>
+    <maven.install.plugin.version>2.3.1</maven.install.plugin.version>
+    <maven.javadoc.plugin.version>2.7</maven.javadoc.plugin.version>
+    <maven.jxr.plugin.version>2.1</maven.jxr.plugin.version>
+    <maven.jar.plugin.version>2.3.1</maven.jar.plugin.version>
+    <maven.war.plugin.version>2.1.1</maven.war.plugin.version>
+    <maven.bundle.plugin.version>2.1.0</maven.bundle.plugin.version>
+    <maven.compiler.plugin.version>2.3.2</maven.compiler.plugin.version>
+    <maven.source.plugin.version>2.1.2</maven.source.plugin.version>
+    <maven.deploy.plugin.version>2.5</maven.deploy.plugin.version>
+    <maven.antrun.plugin.version>1.7</maven.antrun.plugin.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.overlord.gadgets.server</groupId>
+      <artifactId>gadget-server</artifactId>
+      <version>${gadget.version}</version>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.overlord.rtgov</groupId>
+      <artifactId>gadgets</artifactId>
+      <version>${rtgov.version}</version>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.overlord.gadgets.server</groupId>
+      <artifactId>gadget-web</artifactId>
+      <version>${gadget.version}</version>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.overlord</groupId>
+      <artifactId>overlord-commons-installer</artifactId>
+      <version>${overlord-commons.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!-- This section defines the default plugin settings inherited by child 
+      projects. -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven.jar.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>${maven.war.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>${maven.assembly.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>${maven.bundle.plugin.version}</version>
+          <extensions>true</extensions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <!-- Specify the compiler options and settings -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.plugin.version}</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <showDeprecation>false</showDeprecation>
+          <showWarnings>false</showWarnings>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.overlord.gadgets.server</groupId>
+                  <artifactId>gadget-server</artifactId>
+                  <version>${gadget.version}</version>
+                  <type>war</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                  <destFileName>gadget-server-${gadget.version}.war</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.overlord.gadgets.server</groupId>
+                  <artifactId>gadget-web</artifactId>
+                  <version>${gadget.version}</version>
+                  <type>war</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                  <destFileName>gadget-web-${gadget.version}.war</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.overlord.rtgov</groupId>
+                  <artifactId>gadgets</artifactId>
+                  <version>${rtgov.version}</version>
+                  <type>war</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                  <destFileName>gadgets-${rtgov.version}.war</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.overlord</groupId>
+                  <artifactId>overlord-commons-installer</artifactId>
+                  <version>${overlord-commons.version}</version>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                  <destFileName>overlord-commons-installer-${overlord-commons.version}.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <!-- other configurations here -->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven.antrun.plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <configuration>
+              <target>
+                <ant antfile="${basedir}/build.xml">
+                  <target name="install" />
+                </ant>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Repository Group</name>
+      <url>http://repository.jboss.org/nexus/content/groups/developer/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Repository Group</name>
+      <url>http://repository.jboss.org/nexus/content/groups/developer/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>always</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+</project>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Install Gadget Server" default="install">
+
+  <property file="build.properties" />
+
+  <property name="resteasy.version" value="2.3.5.Final" />
+  <property name="gadget.version" value="1.0.0" />
+  <property name="rtgov.version" value="1.0.0" />
+  <property name="overlord-commons.version" value="1.0.6-SNAPSHOT" />
+
+  <property name="jboss.download.url" value="http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/jboss-as-7.1.1.Final.zip" />
+  <property name="resteasy.download.url" value="http://sourceforge.net/projects/resteasy/files/Resteasy%20JAX-RS/${resteasy.version}/resteasy-jaxrs-${resteasy.version}-all.zip/download" />
+
+  <property name="overlord-commons-idp.download.url" value="file:///C:/Users/Eric/.m2/repository/org/overlord/overlord-commons-idp/1.0.6-SNAPSHOT/overlord-commons-idp-1.0.6-SNAPSHOT.war" />
+  <property name="overlord-commons-auth.download.url" value="file:///C:/Users/Eric/.m2/repository/org/overlord/overlord-commons-auth/1.0.6-SNAPSHOT/overlord-commons-auth-1.0.6-SNAPSHOT.jar" />
+
+  <property name="installdir" value="${basedir}/target" />
+  <property name="jboss.as.dist.dir" value="${installdir}/jboss-as-7.1.1.Final" />
+
+  <target name="install">
+    <echo message=" " />
+    <echo message="#############################################" />
+    <echo message="# Running the Gadget installer.  This will  #" />
+    <echo message="# install all Gadget Server components into #" />
+    <echo message="# JBoss 7.1.1.Final.                        #" />
+    <echo message="#############################################" />
+    <mkdir dir="${installdir}"/>
+
+    <echo>-----------------------------</echo>
+    <echo>Downloading JBoss 7.1.1.Final</echo>
+    <echo>-----------------------------</echo>
+    <get src="${jboss.download.url}" dest="${installdir}/jboss-as-7.1.1.Final.zip" usetimestamp="true" />
+
+    <echo>---------------------------------</echo>
+    <echo>Downloading RESTEasy ${resteasy.version}</echo>
+    <echo>---------------------------------</echo>
+    <get src="${resteasy.download.url}" dest="${installdir}/resteasy-jaxrs-${resteasy.version}-all.zip" usetimestamp="true" />
+
+    <echo>---------------------------</echo>
+    <echo>Unzipping JBoss 7.1.1.Final</echo>
+    <echo>---------------------------</echo>
+    <delete dir="${installdir}/jboss-as-7.1.1.Final" />
+    <unzip src="${installdir}/jboss-as-7.1.1.Final.zip" dest="${installdir}" overwrite="true" />
+
+    <echo>------------------------------------</echo>
+    <echo>Unzipping Overlord Commons Installer</echo>
+    <echo>------------------------------------</echo>
+    <unzip src="${project.build.directory}/overlord-commons-installer-${overlord-commons.version}.jar" 
+           dest="${installdir}/overlord-commons-installer-${overlord-commons.version}" overwrite="false" />
+    <ant antfile="build.xml" 
+         dir="${installdir}/overlord-commons-installer-${overlord-commons.version}" 
+         target="install-all" />
+
+    <echo>--------------------</echo>
+    <echo>Unzipping RESTEasy</echo>
+    <echo>--------------------</echo>
+    <unzip src="${installdir}/resteasy-jaxrs-2.3.5.Final-all.zip" dest="${installdir}" overwrite="false" />
+
+    <echo>------------------------------</echo>
+    <echo>Upgrading RESTEasy in JBossAS</echo>
+    <echo>------------------------------</echo>
+    <unzip src="${installdir}/resteasy-jaxrs-2.3.5.Final/resteasy-jboss-modules-2.3.5.Final.zip" dest="${jboss.as.dist.dir}/modules" overwrite="false" />
+    <copy file="updates/resteasy-jaxrs-module.xml" tofile="${jboss.as.dist.dir}/modules/org/jboss/resteasy/resteasy-jaxrs/main/module.xml" />
+
+    <echo>--------------------</echo>
+    <echo>Configuring RESTEasy</echo>
+    <echo>--------------------</echo>
+    <xslt 
+      style="updates/xslt/configureRESTEasy.xslt"
+      in="${jboss.as.dist.dir}/standalone/configuration/standalone.xml"
+      out="${installdir}/_tmp_standalone-re.xml" />
+    <copy file="${installdir}/_tmp_standalone-re.xml" tofile="${jboss.as.dist.dir}/standalone/configuration/standalone.xml" overwrite="true" />
+    <delete file="${installdir}/_tmp_standalone-re.xml" />
+
+    <echo>------------------------------</echo>
+    <echo>Deploying Gadget Server (all)</echo>
+    <echo>------------------------------</echo>
+    <copy file="${project.build.directory}/gadget-server-${gadget.version}.war" 
+          tofile="${jboss.as.dist.dir}/standalone/deployments/gadget-server.war" overwrite="true" />
+    <copy file="${project.build.directory}/gadget-web-${gadget.version}.war" 
+          tofile="${jboss.as.dist.dir}/standalone/deployments/gadget-web.war" overwrite="true" />
+    <copy file="${project.build.directory}/gadgets-${rtgov.version}.war" 
+          tofile="${jboss.as.dist.dir}/standalone/deployments/gadgets.war" overwrite="true" />
+
+    <echo>-------------------------</echo>
+    <echo>Configuring Overlord Apps</echo>
+    <echo>-------------------------</echo>
+    <property name="overlord-apps.dir" value="${jboss.as.dist.dir}/standalone/configuration/overlord-apps" />
+  	<mkdir dir="${overlord-apps.dir}" />
+  	<copy file="updates/gadget-server-overlordapp.properties" todir="${overlord-apps.dir}" overwrite="true" />
+  	
+  	<echo>-------------------------</echo>
+    <echo>Configuring Gadget DS</echo>
+    <echo>-------------------------</echo>
+    <copy file="updates/gs-h2-ds.xml" 
+          tofile="${jboss.as.dist.dir}/standalone/deployments/gs-h2-ds.xml" overwrite="true" />
+    
+    <echo>---------------------------</echo>
+    <echo>Enabling JBoss Remote Debug</echo>
+    <echo>---------------------------</echo>
+    <copy file="updates/standalone.conf" 
+          tofile="${jboss.as.dist.dir}/bin/standalone.conf" overwrite="true" />
+
+    <echo message=" " />
+    <echo message="########" />
+    <echo message="# DONE #" />
+    <echo message="########" />
+    <echo message=" " />
+  </target>
+
+</project>
