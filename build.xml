@@ -6,13 +6,10 @@
   <property name="resteasy.version" value="2.3.5.Final" />
   <property name="gadget.version" value="1.0.0" />
   <property name="rtgov.version" value="1.0.0" />
-  <property name="overlord-commons.version" value="1.0.6-SNAPSHOT" />
+  <property name="overlord-commons.version" value="1.0.6" />
 
   <property name="jboss.download.url" value="http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/jboss-as-7.1.1.Final.zip" />
   <property name="resteasy.download.url" value="http://sourceforge.net/projects/resteasy/files/Resteasy%20JAX-RS/${resteasy.version}/resteasy-jaxrs-${resteasy.version}-all.zip/download" />
-
-  <property name="overlord-commons-idp.download.url" value="file:///C:/Users/Eric/.m2/repository/org/overlord/overlord-commons-idp/1.0.6-SNAPSHOT/overlord-commons-idp-1.0.6-SNAPSHOT.war" />
-  <property name="overlord-commons-auth.download.url" value="file:///C:/Users/Eric/.m2/repository/org/overlord/overlord-commons-auth/1.0.6-SNAPSHOT/overlord-commons-auth-1.0.6-SNAPSHOT.jar" />
 
   <property name="installdir" value="${basedir}/target" />
   <property name="jboss.as.dist.dir" value="${installdir}/jboss-as-7.1.1.Final" />
