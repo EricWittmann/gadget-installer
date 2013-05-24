@@ -13,7 +13,7 @@
     <rtgov.version>1.0.0-SNAPSHOT</rtgov.version>
     <overlord-commons.version>1.0.6</overlord-commons.version>
     <resteasy.version>2.3.5.Final</resteasy.version>
-  
+
     <!-- Instruct the build to use only UTF-8 encoding for source code -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
@@ -36,8 +36,13 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.overlord</groupId>
+      <artifactId>overlord-commons-installer</artifactId>
+      <version>${overlord-commons.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.overlord.gadgets.server</groupId>
-      <artifactId>gadget-server</artifactId>
+      <artifactId>gadget-web</artifactId>
       <version>${gadget.version}</version>
       <type>war</type>
     </dependency>
@@ -47,22 +52,10 @@
       <version>${rtgov.version}</version>
       <type>war</type>
     </dependency>
-    <dependency>
-      <groupId>org.overlord.gadgets.server</groupId>
-      <artifactId>gadget-web</artifactId>
-      <version>${gadget.version}</version>
-      <type>war</type>
-    </dependency>
-    <dependency>
-      <groupId>org.overlord</groupId>
-      <artifactId>overlord-commons-installer</artifactId>
-      <version>${overlord-commons.version}</version>
-    </dependency>
   </dependencies>
 
   <build>
-    <!-- This section defines the default plugin settings inherited by child 
-      projects. -->
+    <!-- This section defines the default plugin settings inherited by child projects. -->
     <pluginManagement>
       <plugins>
         <plugin>
@@ -115,15 +108,6 @@
             </goals>
             <configuration>
               <artifactItems>
-                <artifactItem>
-                  <groupId>org.overlord.gadgets.server</groupId>
-                  <artifactId>gadget-server</artifactId>
-                  <version>${gadget.version}</version>
-                  <type>war</type>
-                  <overWrite>true</overWrite>
-                  <outputDirectory>${project.build.directory}</outputDirectory>
-                  <destFileName>gadget-server-${gadget.version}.war</destFileName>
-                </artifactItem>
                 <artifactItem>
                   <groupId>org.overlord.gadgets.server</groupId>
                   <artifactId>gadget-web</artifactId>

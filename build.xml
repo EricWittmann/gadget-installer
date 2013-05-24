@@ -72,12 +72,12 @@
     <echo>------------------------------</echo>
     <echo>Deploying Gadget Server (all)</echo>
     <echo>------------------------------</echo>
-    <copy file="${project.build.directory}/gadget-server-${gadget.version}.war" 
-          tofile="${jboss.as.dist.dir}/standalone/deployments/gadget-server.war" overwrite="true" />
     <copy file="${project.build.directory}/gadget-web-${gadget.version}.war" 
           tofile="${jboss.as.dist.dir}/standalone/deployments/gadget-web.war" overwrite="true" />
     <copy file="${project.build.directory}/gadgets-${rtgov.version}.war" 
           tofile="${jboss.as.dist.dir}/standalone/deployments/gadgets.war" overwrite="true" />
+    <copy file="deployments/rtgov-mock.war" 
+          tofile="${jboss.as.dist.dir}/standalone/deployments/rtgov-mock.war" overwrite="true" />
 
     <echo>-------------------------</echo>
     <echo>Configuring Overlord Apps</echo>
@@ -91,7 +91,9 @@
     <echo>-------------------------</echo>
     <copy file="updates/gs-h2-ds.xml" 
           tofile="${jboss.as.dist.dir}/standalone/deployments/gs-h2-ds.xml" overwrite="true" />
-    
+    <copy file="updates/gadget-server.properties" 
+          todir="${jboss.as.dist.dir}/standalone/configuration" overwrite="true" />
+
     <echo>---------------------------</echo>
     <echo>Enabling JBoss Remote Debug</echo>
     <echo>---------------------------</echo>
